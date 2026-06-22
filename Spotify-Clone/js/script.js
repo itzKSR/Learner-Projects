@@ -5,7 +5,7 @@ let currentFolder = "songs";
 const getSongs = async (folder) => {
     currentFolder = folder;
     songs = [];
-    let a = await fetch(`/songs/${folder}/`);
+    let a = await fetch(`songs/${folder}/`);
     let response = await a.text();
     let div = document.createElement("div");
     div.innerHTML = response;
@@ -34,7 +34,7 @@ const formatTime = (seconds) => {
 };
 
 const playMusic = (track) => {
-    currentSong.src = `/songs/${currentFolder}/` + track; 
+    currentSong.src = `songs/${currentFolder}/` + track; 
     currentSong.play();
 
     let play = document.querySelector("#play");
@@ -73,7 +73,7 @@ const main = async () => {
     };
 
     const displayAlbums = async () => {
-        let a = await fetch(`/songs/`);
+        let a = await fetch(`songs/`);
         let response = await a.text();
         let div = document.createElement("div");
         div.innerHTML = response;
@@ -91,7 +91,7 @@ const main = async () => {
             
             if (folder && folder !== "songs" && folder !== ".." && !folder.includes(".")) {
                 try {
-                    let infoFetch = await fetch(`/songs/${folder}/info.json`);
+                    let infoFetch = await fetch(`songs/${folder}/info.json`);
                     
                     if (infoFetch.ok) { 
                         let info = await infoFetch.json(); 
@@ -99,7 +99,7 @@ const main = async () => {
                         cardContainer.innerHTML += `
                             <div class="card" data-folder="${folder}">
                                 <div class="imageContainer">
-                                    <img src="/songs/${folder}/cover.jpg" alt="${info.title}">
+                                    <img src="songs/${folder}/cover.jpg" alt="${info.title}">
                                     <button class="play-button">
                                         <img src="img/play.svg" alt="Play">
                                     </button>
