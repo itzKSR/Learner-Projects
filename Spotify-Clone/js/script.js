@@ -26,14 +26,21 @@ const getSongs = async (folder) => {
             };
 
             try {
-                if (typeof window.musicMetadata !== 'undefined') {
-                    let res = await fetch(element.href);
-                    let blob = await res.blob();
-                    let metadata = await window.musicMetadata.parseBlob(blob);
-                    songObj.title = metadata.common.title || cleanName;
-                    songObj.artist = metadata.common.artist || "Unknown Artist";
-                }
-            } catch (e) { }
+                let res = await fetch(element.href);
+                let blob = await res.blob();
+
+                let tags = await new Promise((resolve, reject) => {
+                    jsmediatags.read(blob, {
+                        onSuccess: (tag) => resolve(tag.tags),
+                        onError: (error) => reject(error)
+                    });
+                });
+
+                if (tags.title) songObj.title = tags.title;
+                if (tags.artist) songObj.artist = tags.artist;
+            } catch (e) {
+                console.error("Failed to read metadata for:", fileName, e);
+            }
 
             songsData.push(songObj);
         }
@@ -318,11 +325,11 @@ const main = async () => {
         }
     });
 
-currentSong.addEventListener("ended", () => {
-    if (!isLooping) {
-        next.click();
-    }
-});
+    currentSong.addEventListener("ended", () => {
+        if (!isLooping) {
+            next.click();
+        }
+    });
 };
 
 main();
